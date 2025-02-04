@@ -8,5 +8,5 @@ class LeafNode(htmlnode.HTMLNode):
         if not self.value:
             raise ValueError("All leaf nodes must have a value")
         if not self.tag:
-            return value
+            return self.value
         return f"<{self.tag}{super().props_to_html()}>{self.value}</{self.tag}>"
