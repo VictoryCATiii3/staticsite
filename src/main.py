@@ -51,7 +51,7 @@ def extract_markdown_links(text):
     pattern = r"(?<!!)\[([^\[\]]*)\]\(([^\(\)]*)\)"
     return re.findall(pattern, text)
 
-def split_nodes_images(old_nodes):
+def split_nodes_image(old_nodes):
     new_nodes = []
     for node in old_nodes:
         if node.text_type != TextType.TEXT:
@@ -61,12 +61,13 @@ def split_nodes_images(old_nodes):
         images = extract_markdown_images(text)
         for image in images:
             split_result = text.split(f"![{image[0]}]({image[1]})")
-            if split_result != "":
+            if split_result[0] != "":
                 new_nodes.append(TextNode(split_result[0], TextType.TEXT))
-            new_nodes.append(TextNode(image[0], TextType.IMAGE))
+            new_nodes.append(TextNode(image[0], TextType.IMAGE, image[1]))
             text = split_result[-1]
         if text != "":
             new_nodes.append(TextNode(text, TextType.TEXT))
+    return new_nodes
 
 def split_nodes_link(old_nodes):
     new_nodes = []
@@ -86,6 +87,16 @@ def split_nodes_link(old_nodes):
             new_nodes.append(TextNode(text, TextType.TEXT))
     return new_nodes
 
+def text_to_textnodes(text):
+    if type(text) != str:
+        raise ValueError("text_to_textnodes(text) requires that text be a string")
+    node = TextNode(text, TextType.TEXT)
+    nodes = split_nodes_delimiter([node], "**", TextType.BOLD)
+    nodes = split_nodes_delimiter(nodes, "*", TextType.ITALIC)
+    nodes = split_nodes_delimiter(nodes, "`", TextType.CODE)
+    nodes = split_nodes_image(nodes)
+    nodes = split_nodes_link(nodes)
+    return nodes
 
 def main():
     text_node = TextNode("This is a text node", TextType.BOLD, "https://www.boot.dev")
