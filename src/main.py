@@ -98,6 +98,50 @@ def text_to_textnodes(text):
     nodes = split_nodes_link(nodes)
     return nodes
 
+def markdown_to_blocks_original(markdown):
+    if type(markdown) != str:
+        raise ValueError("markdown_to_blocks(markdown) requires that markdown be a string")
+    split_markdown = markdown.split("\n")
+    output = []
+    for i, item in enumerate(split_markdown):
+        split_markdown[i] = item.strip()
+    temp_string = ""
+    for item in split_markdown:
+        if item == "":
+            if temp_string != "":
+                output.append(temp_string)
+                temp_string = ""
+        else:
+            if temp_string == "":
+                temp_string = item
+            else:
+                temp_string = temp_string + "\n" + item
+    if temp_string != "":
+        output.append(temp_string)
+    return output
+
+def markdown_to_blocks(markdown):
+    if type(markdown) != str:
+        raise ValueError("markdown_to_blocks(markdown) requires that markdown be a string")
+    split_markdown = markdown.split("\n")
+    output = []
+    temp_string = ""
+    for item in split_markdown:
+        if item == "":
+            if temp_string != "":
+                output.append(temp_string)
+                temp_string = ""
+        else:
+            if temp_string == "":
+                temp_string = item
+            else:
+                temp_string = temp_string + "\n" + item
+    if temp_string != "":
+        output.append(temp_string)
+    for i, item in enumerate(output):
+        output[i] = item.strip()
+    return output
+
 def main():
     text_node = TextNode("This is a text node", TextType.BOLD, "https://www.boot.dev")
     print(text_node)

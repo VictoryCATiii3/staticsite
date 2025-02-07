@@ -12,7 +12,7 @@ class HTMLNode():
         raise NotImplementedError("Not Implemented")
 
     def props_to_html(self):
-        #Should return a strin that represents the HTML attributes of the node
+        #Should return a string that represents the HTML attributes of the node
         html_attributes = ""
         if not self.props:
             return html_attributes
