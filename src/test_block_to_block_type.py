@@ -10,7 +10,7 @@ class TestBlockToBlockType(unittest.TestCase):
     def test_quote_block(self):
         self.assertEqual(block_to_block_type("> This a quote\n> another quote line"), BlockType.QUOTE)
     def test_unordered_list(self):
-        self.assertEqual(block_to_block_type("*Item 1\n*Item 2"), BlockType.UNORDERED_LIST)
+        self.assertEqual(block_to_block_type("* Item 1\n* Item 2"), BlockType.UNORDERED_LIST)
     def test_ordered_list(self):
         self.assertEqual(block_to_block_type("1. Item 1\n2. Item 2"), BlockType.ORDERED_LIST)
     def test_paragraph(self):

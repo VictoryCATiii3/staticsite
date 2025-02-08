@@ -24,7 +24,7 @@ def block_to_block_type(block):
         if is_quote:
             return BlockType.QUOTE
         return BlockType.PARGRAPH
-    elif block[0] == "*" or block[0] == "-":
+    elif block[:2] == "* " or block[:2] == "- ":
         block_lines = block.split("\n")
         is_unordered_list = True
         for line in block_lines:
