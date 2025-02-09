@@ -1,8 +1,9 @@
 from textnode import TextType, TextNode
 from leafnode import LeafNode
+from markdown_to_html import markdown_to_html_node
 import re
-
-print("hello world")
+import os
+import shutil
 
 def text_node_to_html_node(text_node):
     #print(self.text_node.text_type)
@@ -142,14 +143,64 @@ def markdown_to_blocks(markdown):
         output[i] = item.strip()
     return output
 
+def copy_source_to_destination(source, destination):
+    if not os.path.exists(destination):
+        os.mkdir(destination)
+
+    for item in os.listdir(source):
+        source_path = os.path.join(source, item)
+        destination_path = os.path.join(destination, item)
+
+        if os.path.isfile(source_path):
+            shutil.copy(source_path, destination_path)
+        else:
+            copy_source_to_destination(source_path, destination_path)
+
+def clear_and_copy_source_to_destination(source, destination):
+    if os.path.exists(destination):
+        shutil.rmtree(destination)
+    copy_source_to_destination(source, destination)
+
+def extract_title(markdown):
+    regex_pattern = r"^#\s+(.*)"
+    match = re.search(regex_pattern, markdown, re.MULTILINE)
+    if match:
+        return match.group(1).strip()
+    raise Exception("No h1 header found")
+
+def generate_page(from_path, template_path, dest_path):
+    print(f"Geneating page from {from_path} to {dest_path} using {template_path}")
+    with open(from_path, "r") as markdown_file:
+        markdown = markdown_file.read()
+        markdown_file.close()
+    title = extract_title(markdown)
+    content = markdown_to_html_node(markdown)
+    print(content.to_html())
+
+    with open(template_path, "r") as template_file:
+        html = template_file.read()
+        template_file.close()
+
+    html = html.replace("{{ Title }}", title)
+    html = html.replace("{{ Content }}", content.to_html())
+
+    os.makedirs(os.path.dirname(dest_path), exist_ok=True)
+
+    with open(dest_path, "w") as destination_file:
+        destination_file.write(html)
+
+
 def main():
-    text_node = TextNode("This is a text node", TextType.BOLD, "https://www.boot.dev")
-    print(text_node)
+    print("----------MAIN----------")
+    static_dir = "static"
+    public_dir = "public"
+    clear_and_copy_source_to_destination(static_dir, public_dir)
 
-    #Test split_nodes_delimiter
-    link_test_text = "This is text with a link [to boot dev](https://www.boot.dev) and [to youtube](https://www.youtube.com/@bootdotdev)"
-    test_node = TextNode(link_test_text, TextType.TEXT)
-    new_nodes = split_nodes_link([test_node])
-    print(new_nodes)
+    markdown = "content/index.md"
+    destination = "public/index.html"
+    template = "template.html"
+    generate_page(markdown, template, destination)
 
-main()
+if __name__=="__main__":
+    main()
+

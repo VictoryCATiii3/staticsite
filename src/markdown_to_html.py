@@ -1,6 +1,6 @@
 import re
 
-from main import markdown_to_blocks, text_to_textnodes, text_node_to_html_node
+from markdown_to_html_utils import markdown_to_blocks, text_to_textnodes,text_node_to_html_node
 from blocks import BlockType, block_to_block_type
 from textnode import TextType, TextNode
 from leafnode import LeafNode
@@ -53,7 +53,7 @@ def quote_block(block):
     lines = block.split("\n")
     new_lines = []
     for line in lines:
-        new_lines.append(line[1:])
+        new_lines.append(line[1:].strip())
     new_block = "\n".join(new_lines)
     text_nodes = text_to_textnodes(new_block)
     nodes = gen_html_nodes(text_nodes)
