@@ -11,15 +11,15 @@ def markdown_to_html_node(markdown):
         return LeafNode("div", "")
     blocks = []
     children = []
-    print(blocks)
+    #print(blocks)
     for block in markdown_to_blocks(markdown):
         block_type = block_to_block_type(block)
-        print(block_type)
+        #print(block_type)
         blocks.append((block, block_type))
-    print(blocks)
+    #print(blocks)
     for block, block_type in blocks:
-        print(f"BLOCK: {block}")
-        print(f"BLOCK TYPE: {block_type}")
+        #print(f"BLOCK: {block}")
+        #print(f"BLOCK TYPE: {block_type}")
         match block_type:
             case BlockType.QUOTE:
                 children.append(quote_block(block))

@@ -175,7 +175,7 @@ def generate_page(from_path, template_path, dest_path):
         markdown_file.close()
     title = extract_title(markdown)
     content = markdown_to_html_node(markdown)
-    print(content.to_html())
+    #print(content.to_html())
 
     with open(template_path, "r") as template_file:
         html = template_file.read()
@@ -189,6 +189,22 @@ def generate_page(from_path, template_path, dest_path):
     with open(dest_path, "w") as destination_file:
         destination_file.write(html)
 
+def generate_pages_recursive(dir_path_content, template_path, dest_dir_path):
+    #if not os.path.exists(dest_dir_path):
+    #    os.mkdir(dest_dir_path)
+
+    template_path = os.path.abspath(template_path)
+    for item in os.listdir(dir_path_content):
+        print(f"dir content: {os.listdir(dir_path_content)}")
+        source_path = os.path.join(dir_path_content, item)
+        destination_path = os.path.join(dest_dir_path, item)
+
+        if(os.path.isfile(source_path)):
+            print(f"Generating page: {source_path} : {template_path} : {destination_path}")
+            generate_page(source_path, template_path, destination_path.replace(".md", ".html"))
+        else:
+            print(f"Calling recursive: {source_path} : {template_path} : {destination_path}")
+            generate_pages_recursive(source_path, template_path, destination_path)
 
 def main():
     print("----------MAIN----------")
@@ -196,10 +212,10 @@ def main():
     public_dir = "public"
     clear_and_copy_source_to_destination(static_dir, public_dir)
 
-    markdown = "content/index.md"
-    destination = "public/index.html"
+    markdown = "content"
+    destination = "public"
     template = "template.html"
-    generate_page(markdown, template, destination)
+    generate_pages_recursive(markdown, template, destination)
 
 if __name__=="__main__":
     main()
